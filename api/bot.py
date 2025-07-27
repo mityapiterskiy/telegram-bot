@@ -3,11 +3,6 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-import logging
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -50,20 +45,7 @@ def home():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """Handle incoming webhook updates from Telegram."""
-    try:
-        if request.method == 'POST':
-            data = request.get_json()
-            logger.info(f"Received webhook data: {data}")
-            
-            if data and 'message' in data:
-                # Simple response for now
-                return jsonify({"status": "ok", "message": "Update received"})
-            else:
-                logger.error("No valid message data received")
-                return jsonify({"error": "No valid data received"}), 400
-    except Exception as e:
-        logger.error(f"Error in webhook: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    return jsonify({"status": "ok", "message": "Webhook received"})
 
 @app.route('/set-webhook', methods=['GET'])
 def set_webhook():
