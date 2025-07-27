@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify
 load_dotenv()
 
 # Get bot token from environment variable
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+BOT_TOKEN = os.getenv('TOKEN')
 
 # Create Flask app
 app = Flask(__name__)
