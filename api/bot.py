@@ -35,7 +35,12 @@ application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify({"status": "Bot is running!"})
+    token_status = "SET" if BOT_TOKEN else "NOT SET"
+    return jsonify({
+        "status": "Bot is running!", 
+        "token_status": token_status,
+        "token_length": len(BOT_TOKEN) if BOT_TOKEN else 0
+    })
 
 @app.route('/webhook', methods=['POST'])
 async def webhook():
