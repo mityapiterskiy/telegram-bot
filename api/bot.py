@@ -3,7 +3,6 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-import asyncio
 import logging
 
 # Set up logging
@@ -56,14 +55,12 @@ def webhook():
             data = request.get_json()
             logger.info(f"Received webhook data: {data}")
             
-            if data:
-                update = Update.de_json(data, application.bot)
-                # Run the async function in the event loop
-                asyncio.run(application.process_update(update))
-                return jsonify({"status": "ok"})
+            if data and 'message' in data:
+                # Simple response for now
+                return jsonify({"status": "ok", "message": "Update received"})
             else:
-                logger.error("No JSON data received")
-                return jsonify({"error": "No data received"}), 400
+                logger.error("No valid message data received")
+                return jsonify({"error": "No valid data received"}), 400
     except Exception as e:
         logger.error(f"Error in webhook: {str(e)}")
         return jsonify({"error": str(e)}), 500
