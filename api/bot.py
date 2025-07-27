@@ -3,6 +3,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
+import asyncio
 
 # Load environment variables
 load_dotenv()
@@ -43,11 +44,12 @@ def home():
     })
 
 @app.route('/webhook', methods=['POST'])
-async def webhook():
+def webhook():
     """Handle incoming webhook updates from Telegram."""
     if request.method == 'POST':
         update = Update.de_json(request.get_json(), application.bot)
-        await application.process_update(update)
+        # Run the async function in the event loop
+        asyncio.run(application.process_update(update))
         return jsonify({"status": "ok"})
 
 @app.route('/set-webhook', methods=['GET'])
