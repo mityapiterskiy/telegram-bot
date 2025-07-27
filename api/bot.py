@@ -28,13 +28,24 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"error": "Not found"}).encode())
 
     def do_POST(self):
-        if self.path == '/webhook':
-            self.send_response(200)
+        try:
+            if self.path == '/webhook':
+                # Read the request body
+                content_length = int(self.headers.get('Content-Length', 0))
+                post_data = self.rfile.read(content_length)
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                response = {"status": "ok", "message": "Webhook received", "data_length": len(post_data)}
+                self.wfile.write(json.dumps(response).encode())
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "Not found"}).encode())
+        except Exception as e:
+            self.send_response(500)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            response = {"status": "ok", "message": "Webhook received"}
-            self.wfile.write(json.dumps(response).encode())
-        else:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(json.dumps({"error": "Not found"}).encode()) 
+            response = {"error": str(e)}
+            self.wfile.write(json.dumps(response).encode()) 
